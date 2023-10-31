@@ -1,7 +1,6 @@
 import { BridgeAdapter, PartialContractEventParams } from "../../helpers/bridgeAdapter.type";
 import { Chain } from "@defillama/sdk/build/general";
 import { getTxDataFromEVMEventLogs } from "../../helpers/processTransactions";
-import { getTxsBlockRangeEtherscan, getLock } from "../../helpers/etherscan";
 import { EventData } from "../../utils/types";
 import { getProvider } from "@defillama/sdk/build/general";
 import { ethers } from "ethers";
@@ -69,16 +68,12 @@ const contractAddresses = {
   };
 };
 
-const completeTransferSigs = [
-  ethers.utils.id("completeTransferAndUnwrapETH(bytes)"),
-  ethers.utils.id("completeTransferAndUnwrapETHWithPayload(bytes)"),
-  ethers.utils.id("completeTransfer(bytes)"),
-  ethers.utils.id("completeTransferWithPayload(bytes)"),
-].map((s) => s.slice(0, 8));
-
 const logMessagePublishedAbi =
   "event LogMessagePublished(address indexed sender, uint64 sequence, uint32 nonce, bytes payload, uint8 consistencyLevel)";
 const logMessagePublishedIface = new ethers.utils.Interface([logMessagePublishedAbi]);
+const transferRedeemedAbi =
+  "event TransferRedeemed(uint16 indexed emitterChainId, bytes32 indexed emitterAddress, uint64 indexed sequence)";
+const transferRedeemedIface = new ethers.utils.Interface([transferRedeemedAbi]);
 const approvalIface = new ethers.utils.Interface([
   "event Approval(address indexed owner, address indexed spender, uint256 value)",
 ]);
@@ -182,37 +177,42 @@ const portalNativeAndWrappedTransfersFromHashes = async (chain: Chain, hashes: s
             });
             return results;
           }
-        }
-        // TODO: change this if the token bridge is upgraded to emit a `TransferRedeemed` event
-        const functionSignature = tx.data.slice(0, 8);
-        if (completeTransferSigs.includes(functionSignature)) {
-          const transfer = tryParseLog(log, transferIface);
-          // unlock or mint
-          let from = "";
-          if (transfer && (transfer.args.from === tokenBridge || transfer.args.from === ethers.constants.AddressZero)) {
-            amount = transfer.args.value;
-            from = transfer.args.from;
-          } else {
-            const withdrawal = tryParseLog(log, withdrawalIface);
-            // unlock
-            if (withdrawal && withdrawal.args.src === tokenBridge) {
-              amount = withdrawal.args.wad;
-              from = withdrawal.args.src;
+        } else {
+          const transferRedeemed = tryParseLog(log, transferRedeemedIface);
+          // the log after the `TransferRedeemed` event will be the `Transfer` or `Withdrawal` event
+          if (transferRedeemed) {
+            const nextLog = logs[i + 1];
+            const transfer = tryParseLog(nextLog, transferIface);
+            // unlock or mint
+            let from = "";
+            if (
+              transfer &&
+              (transfer.args.from === tokenBridge || transfer.args.from === ethers.constants.AddressZero)
+            ) {
+              amount = transfer.args.value;
+              from = transfer.args.from;
+            } else {
+              const withdrawal = tryParseLog(nextLog, withdrawalIface);
+              // unlock
+              if (withdrawal && withdrawal.args.src === tokenBridge) {
+                amount = withdrawal.args.wad;
+                from = withdrawal.args.src;
+              }
             }
-          }
-          if (amount) {
-            results.push({
-              blockNumber: tx.blockNumber!,
-              txHash: hash,
-              // TODO: not sure how to get the token recipient when the tx sender isn't the recipient
-              // (e.g. contract controlled transfers)
-              to: transfer?.args.to || tx.from,
-              from,
-              token: log.address,
-              amount,
-              isDeposit: false,
-            });
-            return results;
+            if (amount) {
+              results.push({
+                blockNumber: tx.blockNumber!,
+                txHash: hash,
+                // TODO: not sure how to get the token recipient when the tx sender isn't the recipient
+                // (e.g. contract controlled transfers)
+                to: transfer?.args.to || tx.from,
+                from,
+                token: nextLog.address,
+                amount,
+                isDeposit: false,
+              });
+              return results;
+            }
           }
         }
         return results;
@@ -298,26 +298,21 @@ const constructParams = (chain: string) => {
     abi: [logMessagePublishedAbi],
     isDeposit: true,
   };
+  const transferRedeemedTopic = transferRedeemedIface.getEventTopic("TransferRedeemed");
+  const transferRedeemedEventParams: PartialContractEventParams = {
+    target: tokenBridge,
+    topic: transferRedeemedTopic,
+    topics: [transferRedeemedTopic],
+    abi: [transferRedeemedAbi],
+    isDeposit: false,
+  };
 
   return async (fromBlock: number, toBlock: number) => {
     const events = await getTxDataFromEVMEventLogs("portal", chain as Chain, fromBlock, toBlock, [
       logMessagePublishedEventParams,
+      transferRedeemedEventParams,
     ]);
-    let hashes = events.map((e) => e.txHash);
-    // The token bridge doesn't emit events on withdrawals/inbound token transfers,
-    // only able to get from subgraph, Etherscan API, etc.
-    // skipped for chains without available API
-    // TODO: change this when the token bridge emits the `TransferRedeemed` event
-    if (chain !== "klaytn" && chain !== "base" && chain !== "moonbeam") {
-      await getLock();
-      const txs = await getTxsBlockRangeEtherscan(chain, tokenBridge, fromBlock, toBlock, {
-        includeSignatures: completeTransferSigs,
-      });
-      if (txs.length) {
-        hashes = [...hashes, ...txs.map((tx: any) => tx.hash)];
-      }
-    }
-
+    const hashes = events.map((e) => e.txHash);
     // every chain also checks for and inserts logs for solana txs
     // const solanaLogs = await processLogsForSolana([...eventLogData, ...nativeTokenData], chain as Chain);
 

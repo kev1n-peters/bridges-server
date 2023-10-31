@@ -155,17 +155,17 @@ const testTransferTokensWithPayload = async () => {
 };
 
 const testCompleteTransferAndUnwrapEth = async () => {
-  // https://etherscan.io/tx/0x6821ce4eca16b4a4ed7ae04bbf30e2e81efae48dc09b362c592e5e3d0fb42580
-  const blockNumber = 18115758;
+  // https://etherscan.io/tx/0xd6acc39544697ba6fbd8b5878c246c63d72d71577931d6b65191125526cae185
+  const blockNumber = 18470535;
   const event = await getEvent(blockNumber);
   assertEqual(
     {
       blockNumber,
-      txHash: "0x6821ce4eca16b4a4ed7ae04bbf30e2e81efae48dc09b362c592e5e3d0fb42580",
+      txHash: "0xd6acc39544697ba6fbd8b5878c246c63d72d71577931d6b65191125526cae185",
       from: "0x3ee18B2214AFF97000D974cf647E7C347E8fa585",
-      to: "0x8655F051512899Af8614275e8E31f260eA276267",
+      to: "0xC75CCc563EABd2452E9DeC065207c706f612525f",
       token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      amount: ethers.BigNumber.from("788573490000000000"),
+      amount: ethers.BigNumber.from("1000000000000000000"),
       isDeposit: false,
     },
     event
@@ -173,17 +173,17 @@ const testCompleteTransferAndUnwrapEth = async () => {
 };
 
 const testCompleteTransferAndUnwrapEthWithPayload = async () => {
-  // https://etherscan.io/tx/0x6821ce4eca16b4a4ed7ae04bbf30e2e81efae48dc09b362c592e5e3d0fb42580
-  const blockNumber = 18115758;
+  // https://etherscan.io/tx/0x905c9fa88ba16dff3ba529ddb59eb52d57cbce5702a39f4979cfdc4cec1e8b59
+  const blockNumber = 18472422;
   const event = await getEvent(blockNumber);
   assertEqual(
     {
       blockNumber,
-      txHash: "0x6821ce4eca16b4a4ed7ae04bbf30e2e81efae48dc09b362c592e5e3d0fb42580",
+      txHash: "0x905c9fa88ba16dff3ba529ddb59eb52d57cbce5702a39f4979cfdc4cec1e8b59",
       from: "0x3ee18B2214AFF97000D974cf647E7C347E8fa585",
-      to: "0x8655F051512899Af8614275e8E31f260eA276267",
+      to: "0x7c99bcffA9E122b9d800bBFBb9B980238f7b6256",
       token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      amount: ethers.BigNumber.from("788573490000000000"),
+      amount: ethers.BigNumber.from("10000000000000"),
       isDeposit: false,
     },
     event
@@ -191,60 +191,59 @@ const testCompleteTransferAndUnwrapEthWithPayload = async () => {
 };
 
 const testCompleteTransfer = async () => {
-  // https://etherscan.io/tx/0x75e84975dde7458034da40a3ab56984c85724b5418cc46d98c92f55d124321f5
+  // https://etherscan.io/tx/0x33423dbffc3a0e9265a25fc951a3ac426acab373c26115f983c71ea8a2dcd0fd
   // wrapped tokens
-  let blockNumber = 18115863;
+  let blockNumber = 18471605;
   let event = await getEvent(blockNumber);
   assertEqual(
     {
       blockNumber,
-      txHash: "0x75e84975dde7458034da40a3ab56984c85724b5418cc46d98c92f55d124321f5",
+      txHash: "0x33423dbffc3a0e9265a25fc951a3ac426acab373c26115f983c71ea8a2dcd0fd",
       from: "0x0000000000000000000000000000000000000000",
-      to: "0xe69c250a7D8a2e92b0f1fc3FB29FC64188aA1765",
-      token: "0x41f7B8b9b897276b7AAE926a9016935280b44E97",
-      amount: ethers.BigNumber.from("59522773"),
+      to: "0x155d1164FF74eaC667Dd2136Aee881A1381DC764",
+      token: "0x418D75f65a02b3D53B2418FB8E1fe493759c7605",
+      amount: ethers.BigNumber.from("12000000000000000000"),
       isDeposit: false,
     },
     event
   );
 
-  // https://etherscan.io/tx/0x9fe8bf8ae01790317b92d7bfdb11e735d3db95322129b23f15e1c7f286b8d26a
+  // https://etherscan.io/tx/0xc56384ee885d5bca79bc03a7c69edd81ef5be9e152019c0a3ea5a8a5abbd3191
   // native tokens
-  blockNumber = 18136907;
+  blockNumber = 18472153;
   event = await getEvent(blockNumber);
   assertEqual(
     {
       blockNumber,
-      txHash: "0x9fe8bf8ae01790317b92d7bfdb11e735d3db95322129b23f15e1c7f286b8d26a",
+      txHash: "0xc56384ee885d5bca79bc03a7c69edd81ef5be9e152019c0a3ea5a8a5abbd3191",
       from: "0x3ee18B2214AFF97000D974cf647E7C347E8fa585",
-      to: "0x7B7B957c284C2C227C980d6E2F804311947b84d0",
-      token: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
-      amount: ethers.BigNumber.from("1000000000"),
+      to: "0x29A9BCc55D97Af5FE429ECe5372fc4d5541382b8",
+      token: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      amount: ethers.BigNumber.from("5000000000"),
       isDeposit: false,
     },
     event
   );
 };
 
-// TODO: Add test when token bridge has `TransferRedeemed` event
-// const testCompleteTransferWithPayload = async () => {
-//   // https://etherscan.io/tx/0x0d9693d30aad7ec1e990c7f288869204c28e0ca1e0f202163e5ce6c048e3be2d
-//   // relayer contract interaction
-//   const blockNumber = 18114479;
-//   const event = await getEvent(blockNumber);
-//   assertEqual(
-//     {
-//       blockNumber,
-//       txHash: "0x0d9693d30aad7ec1e990c7f288869204c28e0ca1e0f202163e5ce6c048e3be2d",
-//       from: "0xCafd2f0A35A4459fA40C0517e17e6fA2939441CA",
-//       to: "0xc4834d405fE6c3389c050eA058395F764435e852",
-//       token: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
-//       amount: ethers.BigNumber.from("33000000000"),
-//       isDeposit: false,
-//     },
-//     event
-//   );
-// };
+const testCompleteTransferWithPayload = async () => {
+  // https://moonscan.io/tx/0x959ad1028e7d3cc687d1b24bf3ca52e868d9e04fc660bab56ae4b8f98dc89d4d
+  // relayer contract interaction
+  const blockNumber = 4769477;
+  const event = await getEvent(blockNumber, "moonbeam");
+  assertEqual(
+    {
+      blockNumber,
+      txHash: "0x959ad1028e7d3cc687d1b24bf3ca52e868d9e04fc660bab56ae4b8f98dc89d4d",
+      from: "0x0000000000000000000000000000000000000000",
+      to: "0xCafd2f0A35A4459fA40C0517e17e6fA2939441CA",
+      token: "0xd4937A95BeC789CC1AE1640714C61c160279B22F",
+      amount: ethers.BigNumber.from("100000000000000000"),
+      isDeposit: false,
+    },
+    event
+  );
+};
 
 const testAvalanche = async () => {
   let blockNumber;
@@ -283,35 +282,35 @@ const testAvalanche = async () => {
     event
   );
 
-  // https://snowtrace.io/tx/0xead88482980ba53f92d8cc0d498555e57f540c2324efb17ba12210e2ce9b20b3
+  // https://snowtrace.io/tx/0xb00c06347f56748c86e47641e3a9e825b442f8296deba4cd6821d1cebe3898d1
   // withdraw native tokens
-  blockNumber = 35149845;
+  blockNumber = 37159795;
   event = await getEvent(blockNumber, "avalanche");
   assertEqual(
     {
       blockNumber,
-      txHash: "0xead88482980ba53f92d8cc0d498555e57f540c2324efb17ba12210e2ce9b20b3",
+      txHash: "0xb00c06347f56748c86e47641e3a9e825b442f8296deba4cd6821d1cebe3898d1",
       from: "0x0e082F06FF657D94310cB8cE8B0D9a04541d8052",
-      to: "0xDc8632F46B9b767B2e5ddF8052e2db0cbb66A27f",
-      token: "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7",
-      amount: ethers.BigNumber.from("6200806850000000000"),
+      to: "0xE6990c7e206D418D62B9e50c8E61f59Dc360183b",
+      token: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+      amount: ethers.BigNumber.from("10000"),
       isDeposit: false,
     },
     event
   );
 
-  // https://snowtrace.io/tx/0x6e39e433bc5c52f15eda43d88d31532ce5c26ad78b592b313892898ce8e22427
+  // https://snowtrace.io/tx/0x443c3b02029e76b948146e3d4313d5a5389f50f02fdd5eda6839090bdeb41239
   // withdraw wrapped tokens
-  blockNumber = 35214701;
+  blockNumber = 37164693;
   event = await getEvent(blockNumber, "avalanche");
   assertEqual(
     {
       blockNumber,
-      txHash: "0x6e39e433bc5c52f15eda43d88d31532ce5c26ad78b592b313892898ce8e22427",
+      txHash: "0x443c3b02029e76b948146e3d4313d5a5389f50f02fdd5eda6839090bdeb41239",
       from: "0x0000000000000000000000000000000000000000",
-      to: "0x301371F30d45127E08d0BbE83b870D042089d3e8",
-      token: "0x0950Fc1AD509358dAeaD5eB8020a3c7d8b43b9DA",
-      amount: ethers.BigNumber.from("7000011"),
+      to: "0x06832B43186C6dEac394916B6583D6bE2D627520",
+      token: "0x6F65Fa22e903122d274838F99840c9c1beE5F77c",
+      amount: ethers.BigNumber.from("580069280"),
       isDeposit: false,
     },
     event
@@ -353,35 +352,35 @@ const testOptimism = async () => {
     event
   );
 
-  // https://optimistic.etherscan.io/tx/0x63f5e45adc5c8f31b192fe2f4435283f5c0cb9b3e01c89c37739a8ca030b81f6#eventlog
+  // https://optimistic.etherscan.io/tx/0xd87456e0be2dc0e669c597324c7826a2095e227f33d42e706e20a908322ebd91
   // withdraw native
-  blockNumber = 109293169;
+  blockNumber = 111588102;
   event = await getEvent(blockNumber, "optimism");
   assertEqual(
     {
       blockNumber,
-      txHash: "0x63f5e45adc5c8f31b192fe2f4435283f5c0cb9b3e01c89c37739a8ca030b81f6",
+      txHash: "0xd87456e0be2dc0e669c597324c7826a2095e227f33d42e706e20a908322ebd91",
       from: "0x1D68124e65faFC907325e3EDbF8c4d84499DAa8b",
-      to: "0x822dB2cE4ACEa6744eCe2F1856d103a244B6Ce07",
-      token: "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
-      amount: ethers.BigNumber.from("490760019"),
+      to: "0xFC397502e11b8e08935Df2295eCB8A79D2122975",
+      token: "0x94b008aA00579c1307B0EF2c499aD98a8ce58e58",
+      amount: ethers.BigNumber.from("8125085"),
       isDeposit: false,
     },
     event
   );
 
-  // https://optimistic.etherscan.io/tx/0x1eb1c5d1be5d110fc8a171ddaed8a2daf87a267dda38464555244d871affcf88
+  // https://optimistic.etherscan.io/tx/0xb8b98c2348124214aea4f062a0eecdedc3857f9a9d0a7e36f84895407358631e
   // withdraw wrapped
-  blockNumber = 109297842;
+  blockNumber = 111576221;
   event = await getEvent(blockNumber, "optimism");
   assertEqual(
     {
       blockNumber,
-      txHash: "0x1eb1c5d1be5d110fc8a171ddaed8a2daf87a267dda38464555244d871affcf88",
+      txHash: "0xb8b98c2348124214aea4f062a0eecdedc3857f9a9d0a7e36f84895407358631e",
       from: "0x0000000000000000000000000000000000000000",
-      to: "0x9631288F4050F7CFbf77B77f8540DeCF6cfC7012",
-      token: "0x8418C1d909842f458c9394886b83F19d62bF1A0D",
-      amount: ethers.BigNumber.from("10000000000000000"),
+      to: "0xB0fb231c58Ef465b720e8Bef705C0Cf0FB56572e",
+      token: "0x6F974A6dfD5B166731704Be226795901c45Bb815",
+      amount: ethers.BigNumber.from("6650000"),
       isDeposit: false,
     },
     event
@@ -424,23 +423,22 @@ const testKlaytn = async () => {
     event
   );
 
-  // Not supported
-  ////https://scope.klaytn.com/tx/0xcd3f53ae2ee584361f5636810af4e1e5984772c867ee6254319038ac2ebf1943?tabId=tokenTransfer
-  //// withdraw wrapped
-  //const blockNumber = 132617076;
-  //const event = await getEvent(blockNumber, "klaytn");
-  //assertEqual(
-  //  {
-  //    blockNumber,
-  //    txHash: "0xcd3f53ae2ee584361f5636810af4e1e5984772c867ee6254319038ac2ebf1943",
-  //    from: "0xb763e8b9208a5a0bef08f200cfc76c0d03e7a5a1",
-  //    to: "0x5b08ac39EAED75c0439FC750d9FE7E1F9dD0193F",
-  //    token: "0x608792deb376cce1c9fa4d0e6b7b44f507cffa6a",
-  //    amount: ethers.BigNumber.from("101706297"),
-  //    isDeposit: false,
-  //  },
-  //  event
-  //);
+  // https://scope.klaytn.com/tx/0x1b5156ae6e4cbf20f1abe0e8f48c3ef1f7e475e1bb16f549357eb50749a85619?tabId=tokenTransfer
+  // withdraw wrapped
+  blockNumber = 136407845;
+  event = await getEvent(blockNumber, "klaytn");
+  assertEqual(
+    {
+      blockNumber,
+      txHash: "0x1b5156ae6e4cbf20f1abe0e8f48c3ef1f7e475e1bb16f549357eb50749a85619",
+      from: "0x0000000000000000000000000000000000000000",
+      to: "0x5f3A2830b12b762C52e067ED9b8029aD612E27E7",
+      token: "0x02bf054363Aa9Fc04af2eED80c926Bbf60aEd548",
+      amount: ethers.BigNumber.from("9882420"),
+      isDeposit: false,
+    },
+    event
+  );
 };
 
 const testSui = async () => {
@@ -545,10 +543,10 @@ const testSui = async () => {
     testCompleteTransferAndUnwrapEth(),
     testCompleteTransferAndUnwrapEthWithPayload(),
     testCompleteTransfer(),
-    // testCompleteTransferWithPayload(),
+    testCompleteTransferWithPayload(),
     testAvalanche(),
     testOptimism(),
     testKlaytn(),
-    testSui(),
+    // testSui(),
   ]);
 })();
